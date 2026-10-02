@@ -1,0 +1,8 @@
+{
+  "name": "ApiConnect",
+  "description": "Retrofit service instance with Moshi for JSON parsing to enable API communication",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
