@@ -129,4 +129,38 @@ class RetrofitMoshiTest {
         assertEquals("Retrofit-App", headers["X-Custom-Client"])
         assertEquals("secret_jwt", interceptor.bearerToken)
     }
+
+    @Test
+    fun `test cloudflare worker script generation`() {
+        val config = com.example.data.cloudflare.CloudflareConfig(
+            tunnelUrl = "https://tunnel.mycorp.org",
+            workerUrl = "https://proxy.workers.dev",
+            anonymizeHeaders = true
+        )
+        val script = config.generateWorkerScript()
+        assertTrue(script.contains("CloudflareEdgeProxy/2.0"))
+        assertTrue(script.contains("https://tunnel.mycorp.org"))
+        assertTrue(script.contains("cf-connecting-ip"))
+    }
+
+    @Test
+    fun `test sip packet generation`() {
+        val session = com.example.data.telecom.SipSession(
+            profile = com.example.data.telecom.SipProfile(
+                username = "bob",
+                domain = "telecom.net",
+                transport = "TLS"
+            )
+        )
+        val packet = session.generateRegisterPacket()
+        assertTrue(packet.contains("REGISTER sip:bob@telecom.net SIP/2.0"))
+        assertTrue(packet.contains("User-Agent: ApiConnect-SIP-Engine/2.0"))
+    }
+
+    @Test
+    fun `test sms intent builder`() {
+        val intent = com.example.data.telecom.SmsGatewayManager.buildSmsIntent("+15551234", "Verification Code: 9912")
+        assertEquals(android.content.Intent.ACTION_SENDTO, intent.action)
+        assertEquals("smsto:%2B15551234", intent.dataString)
+    }
 }
